@@ -5,6 +5,7 @@ import static com.liugeng.bigdata.spider.common.Constants.*;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -34,11 +35,11 @@ public class ZhihuSearchImageTask extends IJobHandler {
 	
 	private String fileBasePath;
 	private String searchWord;
-	private int workers;
+	private int workers = 16;
 	private ForkJoinPool asyncOutputWorkers;
 	
 	@Override
-	public ReturnT<String> execute(String params) throws Exception {
+	public ReturnT<String> execute(String params) {
 		XxlJobLogger.log("开始知乎爬图");
 		Map<String, String> searchParams = ZhihuSpiderUtils.buildParams(searchWord, 20, 0);
 		RunData runData = new LocalRunData();
@@ -55,12 +56,10 @@ public class ZhihuSearchImageTask extends IJobHandler {
 		return ReturnT.SUCCESS;
 	}
 	
-	@PostConstruct
 	public void setAsyncWorkers() {
 		asyncOutputWorkers = (ForkJoinPool)Executors.newWorkStealingPool(workers);
 	}
 	
-	@PreDestroy
 	public void stopTask() {
 		asyncOutputWorkers.shutdownNow();
 	}
