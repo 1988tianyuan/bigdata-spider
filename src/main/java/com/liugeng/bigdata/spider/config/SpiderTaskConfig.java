@@ -1,6 +1,5 @@
 package com.liugeng.bigdata.spider.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,24 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SpiderTaskConfig {
 	
-	@Value("${xxl.job.port}")
-	private int port;
-	@Value("${xxl.job.adminAddresses}")
-	private String adminAddress;
-	@Value("${xxl.job.appName}")
-	private String appName;
-	
 	@Bean(initMethod = "start", destroyMethod = "destroy")
+	@ConfigurationProperties(prefix = "xxl.job")
 	public XxlJobSpringExecutor xxlJobSpringExecutor() throws Exception {
 		XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
-		xxlJobSpringExecutor.setPort(port);
-		xxlJobSpringExecutor.setAdminAddresses(adminAddress);
-		xxlJobSpringExecutor.setAppName(appName);
 		xxlJobSpringExecutor.start();
 		return xxlJobSpringExecutor;
 	}
 	
-	@Bean(initMethod = "setAsyncWorkers", destroyMethod = "stopTask")
+	@Bean(initMethod = "initTask", destroyMethod = "stopTask")
 	@ConfigurationProperties(prefix = "spider.zhihu")
 	public ZhihuSearchImageTask zhihuSearchImageTask() {
 		return new ZhihuSearchImageTask();

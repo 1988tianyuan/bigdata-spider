@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.liugeng</groupId>
     <artifactId>bigdata-spider</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>bigdata-spider</name>
     <description>liugeng's bigdata spider</description>
 
@@ -144,6 +144,41 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <imageName>liugeng-bigdata-spider</imageName>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                    </imageTags>
+                    <forceTags>true</forceTags>
+                    <dockerDirectory>${project.basedir}</dockerDirectory>
+                    <serverId>docker-hub</serverId>
+                    <registryUrl>https://5huh4ntj.mirror.aliyuncs.com/</registryUrl>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <!--<execution>-->
+                        <!--<id>tag-image</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>tag</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<image>liugeng-bigdata-spider:${project.version}</image>-->
+                            <!--<newName>https://5huh4ntj.mirror.aliyuncs.com/liugeng-bigdata-spider:${project.version}</newName>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                </executions>
             </plugin>
         </plugins>
     </build>
