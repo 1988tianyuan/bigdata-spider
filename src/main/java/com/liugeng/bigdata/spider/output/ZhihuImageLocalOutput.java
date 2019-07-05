@@ -22,6 +22,7 @@ import com.liugeng.bigdata.spider.model.zhihu.image.ObjectDto;
 import com.liugeng.bigdata.spider.utils.RegexUtils;
 import com.xuxueli.crawler.util.FileUtil;
 import com.xuxueli.crawler.util.JsoupUtil;
+import com.xxl.job.core.log.XxlJobLogger;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 public class ZhihuImageLocalOutput implements ZhihuDataOutPut {
 	
-	@Value("spider.zhihu.fileBasePath")
+	@Value("${spider.zhihu.fileBasePath}")
 	private String fileBasePath;
 	private ForkJoinPool asyncOutputWorkers;
 	
@@ -52,6 +53,7 @@ public class ZhihuImageLocalOutput implements ZhihuDataOutPut {
 	public void output(List<DataDto> dataList) {
 		Preconditions.checkNotNull(fileBasePath, "fileBasePath should not be null!");
 		checkDirExists(fileBasePath);
+		XxlJobLogger.log("爬图保存地址为：" + fileBasePath);
 		for (DataDto data : dataList) {
 			ObjectDto objectDto = data.getObject();
 			if (objectDto == null || StringUtils.isBlank(objectDto.getContent())) {

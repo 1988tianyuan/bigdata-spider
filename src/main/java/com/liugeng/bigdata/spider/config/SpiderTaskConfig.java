@@ -1,6 +1,7 @@
 package com.liugeng.bigdata.spider.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,8 +19,10 @@ public class SpiderTaskConfig {
 	
 	@Bean(initMethod = "start", destroyMethod = "destroy")
 	@ConfigurationProperties(prefix = "xxl.job")
-	public XxlJobSpringExecutor xxlJobSpringExecutor() throws Exception {
+	public XxlJobSpringExecutor xxlJobSpringExecutor(InetUtils inetUtils) throws Exception {
 		XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
+		String ip = inetUtils.findFirstNonLoopbackHostInfo().getIpAddress();
+		xxlJobSpringExecutor.setIp(ip);
 		xxlJobSpringExecutor.start();
 		return xxlJobSpringExecutor;
 	}

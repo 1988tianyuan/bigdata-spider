@@ -38,7 +38,6 @@ import lombok.ToString;
 public class ZhihuSearchImageTask extends SpiderTask {
 	
 	private String searchWord;
-	private String fileBasePath;
 	private ForkJoinPool asyncOutputWorkers;
 	private int workers;
 	
@@ -77,12 +76,16 @@ public class ZhihuSearchImageTask extends SpiderTask {
 		switch (type) {
 			case "kafka":
 				ZhihuKafkaOutput kafkaOutput = SpringBeanUtils.getBean("zhihuKafkaOutput", ZhihuKafkaOutput.class);
-				kafkaOutput.setTopic(kafkaTopic);
+				if (kafkaTopic != null) {
+					kafkaOutput.setTopic(kafkaTopic);
+				}
 				return kafkaOutput;
 			default:
 				ZhihuImageLocalOutput localOutput = SpringBeanUtils.getBean("zhihuImageLocalOutput", ZhihuImageLocalOutput.class);
 				localOutput.setAsyncOutputWorkers(asyncOutputWorkers);
-				localOutput.setFileBasePath(fileBasePath);
+				if (fileBasePath != null) {
+					localOutput.setFileBasePath(fileBasePath);
+				}
 				return localOutput;
 		}
 	}
