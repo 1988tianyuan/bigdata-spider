@@ -7,11 +7,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import com.liugeng.bigdata.spider.output.FileOutput;
 import org.apache.commons.collections4.MapUtils;
 
 import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
-import com.liugeng.bigdata.spider.output.ZhihuImageLocalOutput;
-import com.liugeng.bigdata.spider.output.ZhihuKafkaOutput;
+import com.liugeng.bigdata.spider.output.impl.ZhihuImageLocalOutput;
+import com.liugeng.bigdata.spider.output.impl.ZhihuKafkaOutput;
 import com.liugeng.bigdata.spider.parser.ZhihuSearchImageParser;
 import com.liugeng.bigdata.spider.utils.CommonUtils;
 import com.liugeng.bigdata.spider.utils.SpringBeanUtils;
@@ -35,7 +36,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ZhihuSearchImageTask extends SpiderTask {
+public class ZhihuSearchImageTask extends FileStoreTask {
 	
 	private String searchWord;
 	private ForkJoinPool asyncOutputWorkers;
@@ -51,7 +52,7 @@ public class ZhihuSearchImageTask extends SpiderTask {
 		RunData runData = new LocalRunData();
 		runData.addUrl(ZHIHU_SEARCH_API_BASE);
 		ZhihuSearchImageParser parser = (ZhihuSearchImageParser)getJsonPageParser("zhihuSearchImageParser", runData);
-		ZhihuDataOutPut output = chooseOutput(paramMap);
+		FileOutput output = chooseOutput(paramMap);
 		parser.setDataOutput(output);
 		@Cleanup("stop")
 		XxlCrawler crawler = new XxlCrawler.Builder()
@@ -68,18 +69,12 @@ public class ZhihuSearchImageTask extends SpiderTask {
 	public void initTask() {
 		asyncOutputWorkers = (ForkJoinPool)Executors.newWorkStealingPool(workers);
 	}
-	
-	private ZhihuDataOutPut chooseOutput(Map<String, String> paramMap) {
+
+	@Override
+	public FileOutput chooseOutput(Map<String, String> paramMap) {
 		String fileBasePath = MapUtils.getString(paramMap, "fileBasePath");
-		String kafkaTopic = MapUtils.getString(paramMap, "topic");
 		String type = MapUtils.getString(paramMap, "outType");
 		switch (type) {
-			case "kafka":
-				ZhihuKafkaOutput kafkaOutput = SpringBeanUtils.getBean("zhihuKafkaOutput", ZhihuKafkaOutput.class);
-				if (kafkaTopic != null) {
-					kafkaOutput.setTopic(kafkaTopic);
-				}
-				return kafkaOutput;
 			default:
 				ZhihuImageLocalOutput localOutput = SpringBeanUtils.getBean("zhihuImageLocalOutput", ZhihuImageLocalOutput.class);
 				localOutput.setAsyncOutputWorkers(asyncOutputWorkers);
@@ -94,4 +89,6 @@ public class ZhihuSearchImageTask extends SpiderTask {
 	public void stopTask() {
 		asyncOutputWorkers.shutdownNow();
 	}
+
+
 }

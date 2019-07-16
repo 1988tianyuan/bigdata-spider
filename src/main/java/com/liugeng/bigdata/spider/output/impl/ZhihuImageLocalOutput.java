@@ -1,4 +1,4 @@
-package com.liugeng.bigdata.spider.output;
+package com.liugeng.bigdata.spider.output.impl;
 
 import java.io.File;
 import java.util.List;
@@ -8,6 +8,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.liugeng.bigdata.spider.output.FileOutput;
+import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 @Getter
 @Setter
-public class ZhihuImageLocalOutput implements ZhihuDataOutPut {
+public class ZhihuImageLocalOutput implements FileOutput {
 	
 	@Value("${spider.zhihu.fileBasePath}")
 	private String fileBasePath;

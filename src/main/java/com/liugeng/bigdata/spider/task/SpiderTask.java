@@ -15,8 +15,6 @@ import com.xxl.job.core.handler.IJobHandler;
  */
 public abstract class SpiderTask extends IJobHandler {
 	
-	private ApplicationContext springContext;
-	
 	public abstract void stopTask();
 	
 	protected SpiderJsonParser getJsonPageParser(String parserName, RunData runData) {
