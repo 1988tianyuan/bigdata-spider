@@ -2,17 +2,18 @@ package com.liugeng.bigdata.spider.task;
 
 import static com.liugeng.bigdata.spider.common.Constants.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
-import com.liugeng.bigdata.spider.output.FileOutput;
 import org.apache.commons.collections4.MapUtils;
 
-import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
+import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
+import com.liugeng.bigdata.spider.output.DataOutput;
+import com.liugeng.bigdata.spider.output.FileOutput;
 import com.liugeng.bigdata.spider.output.impl.ZhihuImageLocalOutput;
-import com.liugeng.bigdata.spider.output.impl.ZhihuKafkaOutput;
 import com.liugeng.bigdata.spider.parser.ZhihuSearchImageParser;
 import com.liugeng.bigdata.spider.utils.CommonUtils;
 import com.liugeng.bigdata.spider.utils.SpringBeanUtils;
@@ -52,7 +53,7 @@ public class ZhihuSearchImageTask extends FileStoreTask {
 		RunData runData = new LocalRunData();
 		runData.addUrl(ZHIHU_SEARCH_API_BASE);
 		ZhihuSearchImageParser parser = (ZhihuSearchImageParser)getJsonPageParser("zhihuSearchImageParser", runData);
-		FileOutput output = chooseOutput(paramMap);
+		DataOutput<List<DataDto>> output = chooseOutput(paramMap);
 		parser.setDataOutput(output);
 		@Cleanup("stop")
 		XxlCrawler crawler = new XxlCrawler.Builder()
@@ -71,7 +72,7 @@ public class ZhihuSearchImageTask extends FileStoreTask {
 	}
 
 	@Override
-	public FileOutput chooseOutput(Map<String, String> paramMap) {
+	public FileOutput<List<DataDto>> chooseOutput(Map<String, String> paramMap) {
 		String fileBasePath = MapUtils.getString(paramMap, "fileBasePath");
 		String type = MapUtils.getString(paramMap, "outType");
 		switch (type) {
@@ -79,7 +80,7 @@ public class ZhihuSearchImageTask extends FileStoreTask {
 				ZhihuImageLocalOutput localOutput = SpringBeanUtils.getBean("zhihuImageLocalOutput", ZhihuImageLocalOutput.class);
 				localOutput.setAsyncOutputWorkers(asyncOutputWorkers);
 				if (fileBasePath != null) {
-					localOutput.setFileBasePath(fileBasePath);
+					localOutput.setUri(fileBasePath);
 				}
 				return localOutput;
 		}

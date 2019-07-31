@@ -3,7 +3,6 @@ package com.liugeng.bigdata.spider.parser;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.liugeng.bigdata.spider.output.FileOutput;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
 import com.liugeng.bigdata.spider.model.zhihu.image.ZhihuApiResponse;
-import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
 import com.liugeng.bigdata.spider.utils.RegexUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,9 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Component("zhihuSearchImageParser")
 @Scope("prototype")
-public class ZhihuSearchImageParser extends SpiderJsonParser {
-	
-	private FileOutput dataOutput;
+public class ZhihuSearchImageParser extends SpiderJsonParser<List<DataDto>> {
 	
 	@Override
 	public void parse(String url, String source) {

@@ -1,9 +1,11 @@
 package com.liugeng.bigdata.spider.task;
 
+import java.util.Map;
+
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
 
 import com.liugeng.bigdata.spider.exception.SpiderTaskException;
+import com.liugeng.bigdata.spider.output.DataOutput;
 import com.liugeng.bigdata.spider.parser.SpiderJsonParser;
 import com.liugeng.bigdata.spider.utils.SpringBeanUtils;
 import com.xuxueli.crawler.rundata.RunData;
@@ -16,6 +18,8 @@ import com.xxl.job.core.handler.IJobHandler;
 public abstract class SpiderTask extends IJobHandler {
 	
 	public abstract void stopTask();
+	
+	public abstract DataOutput chooseOutput(Map<String, String> paramMap);
 	
 	protected SpiderJsonParser getJsonPageParser(String parserName, RunData runData) {
 		SpiderJsonParser pageParser;

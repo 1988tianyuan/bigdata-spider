@@ -8,11 +8,10 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.liugeng.bigdata.spider.output.FileOutput;
-import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.liugeng.bigdata.spider.exception.SpiderTaskException;
 import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
 import com.liugeng.bigdata.spider.model.zhihu.image.ObjectDto;
+import com.liugeng.bigdata.spider.output.FileOutput;
 import com.liugeng.bigdata.spider.utils.RegexUtils;
 import com.xuxueli.crawler.util.FileUtil;
 import com.xuxueli.crawler.util.JsoupUtil;
@@ -38,24 +38,20 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 @Getter
 @Setter
-public class ZhihuImageLocalOutput implements FileOutput {
+public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
 	
-	@Value("${spider.zhihu.fileBasePath}")
-	private String fileBasePath;
 	private ForkJoinPool asyncOutputWorkers;
 	
-	public ZhihuImageLocalOutput() {
-	}
-	
-	public ZhihuImageLocalOutput(ForkJoinPool asyncOutputWorkers) {
-		this.asyncOutputWorkers = asyncOutputWorkers;
+	@Autowired
+	public ZhihuImageLocalOutput(@Value("${spider.zhihu.fileBasePath}")String fileBasePath) {
+		this.uri = fileBasePath;
 	}
 	
 	@Override
 	public void output(List<DataDto> dataList) {
-		Preconditions.checkNotNull(fileBasePath, "fileBasePath should not be null!");
-		checkDirExists(fileBasePath);
-		XxlJobLogger.log("爬图保存地址为：" + fileBasePath);
+		Preconditions.checkNotNull(uri, "fileBasePath should not be null!");
+		checkDirExists(uri);
+		XxlJobLogger.log("爬图保存地址为：" + uri);
 		for (DataDto data : dataList) {
 			ObjectDto objectDto = data.getObject();
 			if (objectDto == null || StringUtils.isBlank(objectDto.getContent())) {
@@ -68,7 +64,7 @@ public class ZhihuImageLocalOutput implements FileOutput {
 			for (String imgUrl : imgs) {
 				String imgName = StringUtils.substringAfterLast(imgUrl, "/");
 				CompletableFuture<Boolean> cf = CompletableFuture.supplyAsync(
-					() -> FileUtil.downFile(imgUrl, 10000, fileBasePath, imgName), asyncOutputWorkers
+					() -> FileUtil.downFile(imgUrl, 10000, uri, imgName), asyncOutputWorkers
 				);
 				cf.whenCompleteAsync((result, error) -> {
 					if (!result || error != null) {
