@@ -1,6 +1,7 @@
 package com.liugeng.bigdata.spider.output.impl;
 
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
@@ -27,6 +28,11 @@ public class ZhihuDataEsOutput implements DataOutput<List<DataDto>> {
 	
 	@Override
 	public void await(long time, TimeUnit timeUnit) {
+	
+	}
+	
+	@Override
+	public void setAsyncOutputWorkers(ForkJoinPool asyncOutputWorkers) {
 	
 	}
 }
