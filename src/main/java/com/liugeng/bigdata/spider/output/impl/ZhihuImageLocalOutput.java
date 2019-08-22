@@ -62,7 +62,7 @@ public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
 				);
 				cf.whenCompleteAsync((result, error) -> {
 					if (!result || error != null) {
-						log.error("下载第图片:{}的时候发生错误", imgUrl, error);
+						log.error("下载图片:{} 的时候发生错误", imgUrl, error);
 					} else {
 						log.info("成功下载图片{}", imgUrl);
 					}
