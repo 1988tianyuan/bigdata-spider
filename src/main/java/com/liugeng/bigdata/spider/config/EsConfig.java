@@ -23,7 +23,6 @@ public class EsConfig {
 	@Bean(destroyMethod = "close")
 	public RestHighLevelClient client() {
 		return new RestHighLevelClient(
-			RestClient.builder(
-				new HttpHost(host, port, "http")));
+			RestClient.builder(new HttpHost(host, port, "http")));
 	}
 }

@@ -3,7 +3,6 @@ package com.liugeng.bigdata.spider.output.impl;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
@@ -16,7 +15,6 @@ import lombok.Setter;
  * @date 2019/7/17 17:44
  */
 @Component("ZhihuDataEsOutput")
-@Scope("prototype")
 @Setter
 @Getter
 public class ZhihuDataEsOutput implements DataOutput<List<DataDto>> {

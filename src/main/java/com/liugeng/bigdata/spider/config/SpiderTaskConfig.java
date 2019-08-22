@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SpiderTaskConfig {
 
-//	@Bean(initMethod = "start", destroyMethod = "destroy")
+	@Bean(initMethod = "start", destroyMethod = "destroy")
 	@ConfigurationProperties(prefix = "xxl.job")
 	public XxlJobSpringExecutor xxlJobSpringExecutor(InetUtils inetUtils) throws Exception {
 		XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();

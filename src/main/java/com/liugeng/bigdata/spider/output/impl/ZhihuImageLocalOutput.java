@@ -13,7 +13,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
@@ -25,8 +24,6 @@ import com.liugeng.bigdata.spider.utils.RegexUtils;
 import com.xuxueli.crawler.util.FileUtil;
 import com.xuxueli.crawler.util.JsoupUtil;
 import com.xxl.job.core.log.XxlJobLogger;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,9 +32,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component("zhihuImageLocalOutput")
-@Scope("prototype")
-@Getter
-@Setter
 public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
 	
 	private ForkJoinPool asyncOutputWorkers;
@@ -92,5 +86,10 @@ public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
 	public void await(long time, TimeUnit timeUnit) {
 		boolean isQuiescent = asyncOutputWorkers.awaitQuiescence(time, timeUnit);
 		log.info(isQuiescent ? "ZhihuImageLocalOutput is finished" : "ZhihuImageLocalOutput is still running!");
+	}
+	
+	@Override
+	public void setAsyncOutputWorkers(ForkJoinPool asyncOutputWorkers) {
+		this.asyncOutputWorkers = asyncOutputWorkers;
 	}
 }

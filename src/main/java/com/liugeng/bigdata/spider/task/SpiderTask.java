@@ -1,6 +1,8 @@
 package com.liugeng.bigdata.spider.task;
 
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 import org.springframework.beans.BeansException;
 
@@ -17,9 +19,11 @@ import com.xxl.job.core.handler.IJobHandler;
  */
 public abstract class SpiderTask extends IJobHandler {
 	
-	public abstract void stopTask();
+	protected Map<String, DataOutput> outputMap;
+	protected ForkJoinPool asyncOutputWorkers;
+	protected int workers;
 	
-	public abstract DataOutput chooseOutput(Map<String, String> paramMap);
+	public abstract void stopTask();
 	
 	protected SpiderJsonParser getJsonPageParser(String parserName, RunData runData) {
 		SpiderJsonParser pageParser;
@@ -31,4 +35,15 @@ public abstract class SpiderTask extends IJobHandler {
 		}
 		return pageParser;
 	}
+	
+	protected void initTask() {
+		asyncOutputWorkers = (ForkJoinPool)Executors.newWorkStealingPool(workers);
+		outputMap = initOutputList();
+	}
+	
+	public void setAsyncOutputWorkers(ForkJoinPool asyncOutputWorkers) {
+		this.asyncOutputWorkers = asyncOutputWorkers;
+	}
+	
+	protected abstract Map<String, DataOutput> initOutputList();
 }

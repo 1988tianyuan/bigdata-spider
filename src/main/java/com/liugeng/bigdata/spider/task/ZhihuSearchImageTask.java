@@ -2,10 +2,9 @@ package com.liugeng.bigdata.spider.task;
 
 import static com.liugeng.bigdata.spider.common.Constants.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.MapUtils;
@@ -40,8 +39,6 @@ import lombok.ToString;
 public class ZhihuSearchImageTask extends FileStoreTask {
 	
 	private String searchWord;
-	private ForkJoinPool asyncOutputWorkers;
-	private int workers;
 	
 	@Override
 	public ReturnT<String> execute(String params) {
@@ -67,29 +64,25 @@ public class ZhihuSearchImageTask extends FileStoreTask {
 		return ReturnT.SUCCESS;
 	}
 	
-	public void initTask() {
-		asyncOutputWorkers = (ForkJoinPool)Executors.newWorkStealingPool(workers);
-	}
-
-	@Override
-	public FileOutput<List<DataDto>> chooseOutput(Map<String, String> paramMap) {
+	private FileOutput<List<DataDto>> chooseOutput(Map<String, String> paramMap) {
 		String fileBasePath = MapUtils.getString(paramMap, "fileBasePath");
 		String type = MapUtils.getString(paramMap, "outType");
-		switch (type) {
-			default:
-				ZhihuImageLocalOutput localOutput = SpringBeanUtils.getBean("zhihuImageLocalOutput", ZhihuImageLocalOutput.class);
-				localOutput.setAsyncOutputWorkers(asyncOutputWorkers);
-				if (fileBasePath != null) {
-					localOutput.setUri(fileBasePath);
-				}
-				return localOutput;
+		ZhihuImageLocalOutput localOutput = (ZhihuImageLocalOutput) outputMap.get(type);
+		if (fileBasePath != null) {
+			localOutput.setUri(fileBasePath);
 		}
+		return localOutput;
+	}
+	
+	@Override
+	protected Map<String, DataOutput> initOutputList() {
+		ZhihuImageLocalOutput localOutput = SpringBeanUtils.getBean("zhihuImageLocalOutput", ZhihuImageLocalOutput.class);
+		localOutput.setAsyncOutputWorkers(asyncOutputWorkers);
+		return Collections.singletonMap("local", localOutput);
 	}
 	
 	@Override
 	public void stopTask() {
 		asyncOutputWorkers.shutdownNow();
 	}
-
-
 }

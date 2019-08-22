@@ -1,5 +1,6 @@
 package com.liugeng.bigdata.spider.output;
 
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,4 +12,6 @@ public interface DataOutput<T> {
 	void output(T data);
 	
 	void await(long time, TimeUnit timeUnit);
+	
+	void setAsyncOutputWorkers(ForkJoinPool asyncOutputWorkers);
 }
