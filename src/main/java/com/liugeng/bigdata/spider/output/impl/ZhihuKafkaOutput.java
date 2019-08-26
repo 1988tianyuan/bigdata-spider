@@ -2,6 +2,7 @@ package com.liugeng.bigdata.spider.output.impl;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
@@ -66,5 +67,10 @@ public class ZhihuKafkaOutput implements ZhihuDataOutPut {
 		} catch (Exception ignore) {
 			// just ignore
 		}
+	}
+	
+	@Override
+	public void setAsyncOutputWorkers(ForkJoinPool asyncOutputWorkers) {
+	
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
 import com.liugeng.bigdata.spider.output.DataOutput;
@@ -38,6 +39,7 @@ import lombok.ToString;
 @ToString
 public class ZhihuSearchImageTask extends FileStoreTask {
 	
+	@Value("${spider.zhihu.search-word}")
 	private String searchWord;
 	
 	@Override

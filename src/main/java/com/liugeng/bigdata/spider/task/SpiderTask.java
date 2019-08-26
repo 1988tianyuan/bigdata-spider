@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.liugeng.bigdata.spider.exception.SpiderTaskException;
 import com.liugeng.bigdata.spider.output.DataOutput;
@@ -21,6 +22,7 @@ public abstract class SpiderTask extends IJobHandler {
 	
 	protected Map<String, DataOutput> outputMap;
 	protected ForkJoinPool asyncOutputWorkers;
+	@Value("${spider.zhihu.workers}")
 	protected int workers;
 	
 	public abstract void stopTask();
