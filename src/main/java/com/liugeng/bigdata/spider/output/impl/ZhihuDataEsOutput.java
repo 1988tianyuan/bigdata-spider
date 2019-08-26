@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
@@ -20,6 +22,8 @@ import lombok.Setter;
 @Getter
 public class ZhihuDataEsOutput implements DataOutput<List<DataDto>> {
 	
+	@Autowired
+	private RestHighLevelClient client;
 	
 	@Override
 	public void output(List<DataDto> dataList) {
