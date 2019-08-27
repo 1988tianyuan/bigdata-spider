@@ -40,7 +40,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ZhihuSearchTask extends FileStoreTask {
+public class ZhihuSearchTask extends ZhihuSpiderTask {
 	
 	@Value("${spider.zhihu.search-word}")
 	private String searchWord;
@@ -73,7 +73,8 @@ public class ZhihuSearchTask extends FileStoreTask {
 	
 	private DataOutput<List<DataDto>> chooseOutput(Map<String, String> paramMap) {
 		String outType = MapUtils.getString(paramMap, "outType");
-		String taskType = MapUtils.getString(paramMap, "type");
+		String taskType = MapUtils.getString(paramMap, "type", "data");
+		DataOutput<List<DataDto>> dataOutput = null;
 		switch (taskType) {
 			case "image":
 				String fileBasePath = MapUtils.getString(paramMap, "fileBasePath");
@@ -81,17 +82,20 @@ public class ZhihuSearchTask extends FileStoreTask {
 				ZhihuImageLocalOutput localOutput = (ZhihuImageLocalOutput) outputMap.get(outType);
 				// TODO: 2019/8/27
 				localOutput.setUri(fileBasePath);
-				return localOutput;
+				dataOutput = localOutput;
+				break;
 			default:
-				return  (ZhihuDataEsOutput) outputMap.get("es");
+				dataOutput = (ZhihuDataEsOutput) outputMap.get("es");
 		}
+		Preconditions.checkNotNull(dataOutput, "Your specified output type doesn't exist, please confirm the params.");
+		return dataOutput;
 	}
 	
 	@Override
 	protected Map<String, DataOutput> initOutputList() {
 		ZhihuImageLocalOutput localOutput = SpringBeanUtils.getBean("zhihuImageLocalOutput", ZhihuImageLocalOutput.class);
-		ZhihuDataEsOutput esOutput = SpringBeanUtils.getBean("zhihuDataEsOutput", ZhihuDataEsOutput.class);
 		localOutput.setAsyncOutputWorkers(asyncOutputWorkers);
+		ZhihuDataEsOutput esOutput = SpringBeanUtils.getBean("zhihuDataEsOutput", ZhihuDataEsOutput.class);
 		Map<String, DataOutput> outputMap = new HashMap<>();
 		outputMap.put("local", localOutput);
 		outputMap.put("es", esOutput);
