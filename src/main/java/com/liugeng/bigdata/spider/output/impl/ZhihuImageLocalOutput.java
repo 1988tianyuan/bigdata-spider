@@ -15,11 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Preconditions;
 import com.liugeng.bigdata.spider.exception.SpiderTaskException;
 import com.liugeng.bigdata.spider.model.zhihu.image.DataDto;
 import com.liugeng.bigdata.spider.model.zhihu.image.ObjectDto;
-import com.liugeng.bigdata.spider.output.FileOutput;
 import com.liugeng.bigdata.spider.utils.RegexUtils;
 import com.xuxueli.crawler.util.FileUtil;
 import com.xuxueli.crawler.util.JsoupUtil;
@@ -32,9 +30,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component("zhihuImageLocalOutput")
-public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
+public class ZhihuImageLocalOutput extends ZhihuDataOutput {
 	
 	private ForkJoinPool asyncOutputWorkers;
+	private String uri;
 	
 	@Autowired
 	public ZhihuImageLocalOutput(@Value("${spider.zhihu.fileBasePath}")String fileBasePath) {
@@ -43,7 +42,6 @@ public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
 	
 	@Override
 	public void output(List<DataDto> dataList) {
-		Preconditions.checkNotNull(uri, "fileBasePath should not be null!");
 		checkDirExists(uri);
 		XxlJobLogger.log("爬图保存地址为：" + uri);
 		for (DataDto data : dataList) {
@@ -91,5 +89,13 @@ public class ZhihuImageLocalOutput extends FileOutput<List<DataDto>> {
 	@Override
 	public void setAsyncOutputWorkers(ForkJoinPool asyncOutputWorkers) {
 		this.asyncOutputWorkers = asyncOutputWorkers;
+	}
+	
+	public String getUri() {
+		return uri;
+	}
+	
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 }

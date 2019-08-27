@@ -5,7 +5,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
-import com.liugeng.bigdata.spider.output.ZhihuDataOutPut;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,15 +29,14 @@ import lombok.Setter;
 @Scope("prototype")
 @Setter
 @Getter
-public class ZhihuKafkaOutput implements ZhihuDataOutPut {
+public class ZhihuKafkaOutput extends ZhihuDataOutput {
 	
 	@Value("${spider.zhihu.kafkaTopic}")
 	private String topic;
 	@Autowired
 	private KafkaSender sender;
 	
-	private final List<ListenableFuture<SendResult<String, Object>>> futures
-		= new CopyOnWriteArrayList<>();
+	private final List<ListenableFuture<SendResult<String, Object>>> futures = new CopyOnWriteArrayList<>();
 	
 	@Override
 	public void output(List<DataDto> dataDtoList) {

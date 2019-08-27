@@ -5,7 +5,7 @@ import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.liugeng.bigdata.spider.task.ZhihuSearchImageTask;
+import com.liugeng.bigdata.spider.task.ZhihuSearchTask;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +29,7 @@ public class SpiderTaskConfig {
 	
 	@Bean(initMethod = "initTask", destroyMethod = "stopTask")
 	@ConfigurationProperties(prefix = "spider.zhihu")
-	public ZhihuSearchImageTask zhihuSearchImageTask() {
-		return new ZhihuSearchImageTask();
+	public ZhihuSearchTask zhihuSearchImageTask() {
+		return new ZhihuSearchTask();
 	}
 }
