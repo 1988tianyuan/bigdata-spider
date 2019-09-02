@@ -6,15 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.lucene.queryparser.xml.QueryBuilderFactory;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexAction;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -52,11 +49,12 @@ public class ZhihuSpiderController {
 	private RestHighLevelClient client;
 	
 	@GetMapping("/search")
-	public List<Map<String, Object>> searchByKeyWord(@RequestParam String keyWord) throws IOException {
-		SearchRequest searchRequest = new SearchRequest("test_liugeng_1");
+	public List<Map<String, Object>> searchByKeyWord(@RequestParam String keyWord,
+		@RequestParam(defaultValue = "answer") String type) throws IOException {
+		SearchRequest searchRequest = new SearchRequest("zhihu_search_" + type);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.matchQuery("name", keyWord));
-		searchSourceBuilder.highlighter(createHighlightBuilder("name"));
+		searchSourceBuilder.query(QueryBuilders.matchQuery("content", keyWord));
+		searchSourceBuilder.highlighter(createHighlightBuilder("content"));
 		searchRequest.source(searchSourceBuilder);
 		SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 		SearchHit[] searchHits = searchResponse.getHits().getHits();
@@ -64,7 +62,7 @@ public class ZhihuSpiderController {
 		if (searchHits != null && searchHits.length > 0) {
 			for (SearchHit searchHit : searchHits) {
 				Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
-				HighlightField nameField = highlightFields.get("name");
+				HighlightField nameField = highlightFields.get("content");
 				Text text = nameField.fragments()[0];
 				Map<String, Object> docResult = new HashMap<>(searchHit.getSourceAsMap());
 				docResult.put("hight_name", text.string());
@@ -86,7 +84,7 @@ public class ZhihuSpiderController {
 	
 	@GetMapping("/{id}")
 	public Map<String, Object> getById(@PathVariable String id) throws IOException {
-		GetRequest getRequest = new GetRequest("test_liugeng_1", id);
+		GetRequest getRequest = new GetRequest("zhihu_search_answer", id);
 		GetResponse response = client.get(getRequest, RequestOptions.DEFAULT);
 		return response.getSource();
 	}
