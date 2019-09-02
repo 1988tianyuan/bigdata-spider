@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -28,19 +27,17 @@ public abstract class ZhihuSpiderTask extends IJobHandler {
 	
 	public abstract void stopTask();
 	
-	protected ZhihuSearchParser getJsonPageParser(Map<String, String> paramMap, RunData runData) {
+	protected ZhihuSearchParser getJsonPageParser(TaskType taskType, RunData runData) {
 		ZhihuSearchParser pageParser;
-		String type = null;
 		try {
-			type = MapUtils.getString(paramMap, "type", "data");
-			if (type.equals("image")) {
+			if (taskType.equals(TaskType.IMAGE)) {
 				pageParser = SpringBeanUtils.getBean("zhihuSearchImageParser", ZhihuSearchParser.class);
 			} else {
 				pageParser = SpringBeanUtils.getBean("zhihuSearchParser", ZhihuSearchParser.class);
 			}
 			pageParser.setRunData(runData);
 		} catch (BeansException e) {
-			throw new SpiderTaskException("Can't find pageParser of this type: " + type);
+			throw new SpiderTaskException("Can't find pageParser of this type: " + taskType);
 		}
 		return pageParser;
 	}

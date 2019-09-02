@@ -36,7 +36,7 @@ public class ZhihuImageLocalOutput extends ZhihuDataOutput {
 	private String uri;
 	
 	@Autowired
-	public ZhihuImageLocalOutput(@Value("${spider.zhihu.fileBasePath}")String fileBasePath) {
+	public ZhihuImageLocalOutput(@Value("${spider.zhihu.fileBasePath}") String fileBasePath) {
 		this.uri = fileBasePath;
 	}
 	
