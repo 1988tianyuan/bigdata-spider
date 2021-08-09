@@ -21,7 +21,7 @@
         <lombok.version>1.16.16</lombok.version>
         <fastjson.version>1.2.58</fastjson.version>
         <xxl-job.version>2.0.1</xxl-job.version>
-        <elasticsearch>7.2.0</elasticsearch>
+        <elasticsearch>7.13.3</elasticsearch>
         <swagger.version>2.9.2</swagger.version>
     </properties>
 
