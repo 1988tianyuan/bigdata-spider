@@ -20,7 +20,7 @@
         <junit.version>4.11</junit.version>
         <lombok.version>1.16.16</lombok.version>
         <fastjson.version>1.2.58</fastjson.version>
-        <xxl-job.version>2.0.1</xxl-job.version>
+        <xxl-job.version>2.3.0</xxl-job.version>
         <elasticsearch>7.2.0</elasticsearch>
         <swagger.version>2.9.2</swagger.version>
     </properties>
